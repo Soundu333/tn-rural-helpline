@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Detail - Sub Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #f0f2f5; }
+        .sidebar {
+            background: #1b5e20;
+            min-height: 100vh;
+            padding: 0;
+            position: fixed;
+            width: 250px;
+        }
+        .sidebar-header {
+            background: #2e7d32;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        .sidebar-menu a {
+            display: block;
+            padding: 15px 20px;
+            color: #ccc;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: #2e7d32;
+            color: white;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .detail-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .detail-card h5 {
+            color: #1b5e20;
+            border-bottom: 2px solid #1b5e20;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .info-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .info-table td:first-child {
+            font-weight: bold;
+            width: 35%;
+            color: #555;
+        }
+        .btn-update {
+            background: #1b5e20;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h5>🏛️ TN Rural Helpline</h5>
+            <small>Sub Admin Panel</small>
+        </div>
+        <div class="sidebar-menu">
+            <a href="/accounts/sub-admin/dashboard/"><i class="fas fa-home me-2"></i> Dashboard</a>
+            <a href="/accounts/sub-admin/complaints/" class="active"><i class="fas fa-list me-2"></i> All Complaints</a>
+            <a href="/accounts/sub-admin/complaints/?status=pending"><i class="fas fa-clock me-2"></i> Pending</a>
+            <a href="/accounts/sub-admin/complaints/?status=in_progress"><i class="fas fa-spinner me-2"></i> In Progress</a>
+            <a href="/accounts/sub-admin/complaints/?status=resolved"><i class="fas fa-check me-2"></i> Resolved</a>
+            <a href="/accounts/logout/"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Complaint Info -->
+        <div class="detail-card">
+            <h5><i class="fas fa-file-alt me-2"></i>Complaint Details - {{ complaint.ticket_id }}</h5>
+            <table class="info-table" style="width:100%">
+                <tr>
+                    <td>Ticket ID</td>
+                    <td><strong>{{ complaint.ticket_id }}</strong></td>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>{{ complaint.name|default:complaint.user.username }}</td>
+                </tr>
+                <tr>
+                    <td>Mobile</td>
+                    <td>{{ complaint.mobile|default:complaint.user.phone_number }}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{{ complaint.email|default:complaint.user.email }}</td>
+                </tr>
+                <tr>
+                    <td>Address</td>
+                    <td>{{ complaint.address|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td>District</td>
+                    <td>{{ complaint.district }}</td>
+                </tr>
+                <tr>
+                    <td>Block</td>
+                    <td>{{ complaint.block }}</td>
+                </tr>
+                <tr>
+                    <td>Panchayat</td>
+                    <td>{{ complaint.panchayat }}</td>
+                </tr>
+                <tr>
+                    <td>Habitation</td>
+                    <td>{{ complaint.habitation }}</td>
+                </tr>
+                <tr>
+                    <td>Category</td>
+                    <td>{{ complaint.category.name|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td>Sub Category</td>
+                    <td>{{ complaint.sub_category.name|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td>Title</td>
+                    <td>{{ complaint.title }}</td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td>{{ complaint.description }}</td>
+                </tr>
+                <tr>
+                    <td>Priority</td>
+                    <td>
+                        {% if complaint.priority == 'emergency' %}
+                            <span class="badge bg-danger">🚨 Emergency</span>
+                        {% elif complaint.priority == 'high' %}
+                            <span class="badge bg-warning">High</span>
+                        {% elif complaint.priority == 'medium' %}
+                            <span class="badge bg-primary">Medium</span>
+                        {% else %}
+                            <span class="badge bg-success">Low</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Current Status</td>
+                    <td>
+                        {% if complaint.status == 'pending' %}
+                            <span class="badge bg-warning">Pending</span>
+                        {% elif complaint.status == 'in_progress' %}
+                            <span class="badge bg-primary">In Progress</span>
+                        {% elif complaint.status == 'resolved' %}
+                            <span class="badge bg-success">Resolved</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ complaint.status|upper }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>MM Reference</td>
+                    <td>{{ complaint.mm_reference|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td>Submitted Date</td>
+                    <td>{{ complaint.created_at|date:"d M Y H:i" }}</td>
+                </tr>
+                {% if complaint.document %}
+                <tr>
+                    <td>Document</td>
+                    <td><a href="{{ complaint.document.url }}" target="_blank" class="btn btn-sm btn-outline-primary">📄 View Document</a></td>
+                </tr>
+                {% endif %}
+                {% if complaint.photo %}
+                <tr>
+                    <td>Photo</td>
+                    <td><img src="{{ complaint.photo.url }}" style="max-width:200px; border-radius:5px;"></td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+
+        <!-- Update Status -->
+        <div class="detail-card">
+            <h5><i class="fas fa-edit me-2"></i>Update Complaint Status</h5>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Change Status</label>
+                        <select name="status" class="form-control">
+                            <option value="pending" {% if complaint.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="assigned" {% if complaint.status == 'assigned' %}selected{% endif %}>Assigned</option>
+                            <option value="in_progress" {% if complaint.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                            <option value="resolved" {% if complaint.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                            <option value="closed" {% if complaint.status == 'closed' %}selected{% endif %}>Closed</option>
+                            <option value="escalated" {% if complaint.status == 'escalated' %}selected{% endif %}>Escalated</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-update">
+                    <i class="fas fa-save me-2"></i>Update Status
+                </button>
+                <a href="/accounts/sub-admin/complaints/" class="btn btn-outline-secondary ms-2">
+                    <i class="fas fa-arrow-left me-2"></i>Back
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

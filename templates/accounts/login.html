@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TN Rural Helpline</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .login-card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .tn-header {
+            background: #1a237e;
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .btn-login {
+            background: #1a237e;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .btn-login:hover {
+            background: #0d47a1;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card login-card">
+                    <div class="tn-header">
+                        <h4>🏛️ Tamil Nadu Rural Helpline</h4>
+                        <p class="mb-0">தமிழ்நாடு கிராமப்புற உதவி மையம்</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <h5 class="text-center mb-4">Login / உள்நுழைவு</h5>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" name="username" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Captcha</label>
+                                {{ form.captcha }}
+                            </div>
+                            <button type="submit" class="btn btn-login">Login</button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'register' %}">New User? Register Here</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

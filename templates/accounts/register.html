@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TN Rural Helpline</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .register-card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .tn-header {
+            background: #1a237e;
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .btn-register {
+            background: #1a237e;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+        }
+        .btn-register:hover {
+            background: #0d47a1;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card register-card">
+                    <div class="tn-header">
+                        <h4>🏛️ Tamil Nadu Rural Helpline</h4>
+                        <p class="mb-0">புதிய பயனர் பதிவு / New User Registration</p>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-danger">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Username</label>
+                                    <input type="text" name="username" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Phone Number / தொலைபேசி</label>
+                                    <input type="text" name="phone_number" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">District / மாவட்டம்</label>
+                                    <select name="district" id="district_select" class="form-control" onchange="loadTaluks()" required>
+                                        <option value="">Select District / மாவட்டம் தேர்ந்தெடு</option>
+                                        <option value="Ariyalur">Ariyalur</option>
+                                        <option value="Chengalpattu">Chengalpattu</option>
+                                        <option value="Chennai">Chennai</option>
+                                        <option value="Coimbatore">Coimbatore</option>
+                                        <option value="Cuddalore">Cuddalore</option>
+                                        <option value="Dharmapuri">Dharmapuri</option>
+                                        <option value="Dindigul">Dindigul</option>
+                                        <option value="Erode">Erode</option>
+                                        <option value="Kallakurichi">Kallakurichi</option>
+                                        <option value="Kancheepuram">Kancheepuram</option>
+                                        <option value="Kanyakumari">Kanyakumari</option>
+                                        <option value="Karur">Karur</option>
+                                        <option value="Krishnagiri">Krishnagiri</option>
+                                        <option value="Madurai">Madurai</option>
+                                        <option value="Mayiladuthurai">Mayiladuthurai</option>
+                                        <option value="Nagapattinam">Nagapattinam</option>
+                                        <option value="Namakkal">Namakkal</option>
+                                        <option value="Nilgiris">Nilgiris</option>
+                                        <option value="Perambalur">Perambalur</option>
+                                        <option value="Pudukkottai">Pudukkottai</option>
+                                        <option value="Ramanathapuram">Ramanathapuram</option>
+                                        <option value="Ranipet">Ranipet</option>
+                                        <option value="Salem">Salem</option>
+                                        <option value="Sivaganga">Sivaganga</option>
+                                        <option value="Tenkasi">Tenkasi</option>
+                                        <option value="Thanjavur">Thanjavur</option>
+                                        <option value="Theni">Theni</option>
+                                        <option value="Thoothukudi">Thoothukudi</option>
+                                        <option value="Tiruchirappalli">Tiruchirappalli</option>
+                                        <option value="Tirunelveli">Tirunelveli</option>
+                                        <option value="Tirupattur">Tirupattur</option>
+                                        <option value="Tiruppur">Tiruppur</option>
+                                        <option value="Tiruvallur">Tiruvallur</option>
+                                        <option value="Tiruvannamalai">Tiruvannamalai</option>
+                                        <option value="Tiruvarur">Tiruvarur</option>
+                                        <option value="Vellore">Vellore</option>
+                                        <option value="Viluppuram">Viluppuram</option>
+                                        <option value="Virudhunagar">Virudhunagar</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Taluk / வட்டம்</label>
+                                    <select name="taluk" id="taluk_select" class="form-control" required>
+                                        <option value="">Select Taluk / வட்டம் தேர்ந்தெடு</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Village / கிராமம்</label>
+                                    <div class="input-group">
+                                        <input type="text" name="village" id="village_field" class="form-control" placeholder="Enter or speak your village" required>
+                                        <button type="button" class="btn btn-outline-primary" onclick="startVoice()" id="voice_btn">🎤</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" name="password1" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Confirm Password</label>
+                                    <input type="password" name="password2" class="form-control" required>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Captcha</label>
+                                    {{ form.captcha }}
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-register">Register / பதிவு செய்க</button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'login' %}">Already have account? Login Here</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const districtTaluks = {
+            "Chennai": ["Ambattur", "Egmore", "Fort", "Perambur", "Sholinganallur", "Thousand Lights", "Tiruvottiyur"],
+            "Coimbatore": ["Coimbatore North", "Coimbatore South", "Mettupalayam", "Pollachi", "Sulur", "Valparai"],
+            "Madurai": ["Madurai North", "Madurai South", "Melur", "Thirumangalam", "Usilampatti", "Vadipatti"],
+            "Salem": ["Attur", "Edapadi", "Mettur", "Omalur", "Salem", "Sankari", "Yercaud"],
+            "Tiruchirappalli": ["Lalgudi", "Manachanallur", "Musiri", "Srirangam", "Thottiyam", "Tiruchirappalli", "Tiruverambur"],
+            "Tirunelveli": ["Ambasamudram", "Cheranmahadevi", "Nanguneri", "Palayamkottai", "Radhapuram", "Sankarankovil", "Tenkasi"],
+            "Vellore": ["Anaicut", "Gudiyatham", "Katpadi", "Pernambut", "Vaniyambadi", "Vellore"],
+            "Thanjavur": ["Kumbakonam", "Orathanadu", "Papanasam", "Pattukkottai", "Peravurani", "Thanjavur", "Thiruvaiyaru"],
+            "Erode": ["Bhavani", "Erode", "Gobichettipalayam", "Perundurai", "Sathyamangalam"],
+            "Dindigul": ["Attur", "Dindigul", "Natham", "Nilakottai", "Oddanchatram", "Palani", "Vedasandur"],
+            "Kancheepuram": ["Kancheepuram", "Sriperumbudur", "Uthiramerur", "Walajabad"],
+            "Cuddalore": ["Bhuvanagiri", "Chidambaram", "Cuddalore", "Kattumannarkoil", "Panruti", "Virudhachalam"],
+            "Dharmapuri": ["Dharmapuri", "Harur", "Nammakkal", "Palacode", "Pennagaram"],
+            "Namakkal": ["Kolli Hills", "Kumarapalayam", "Namakkal", "Rasipuram", "Tiruchengodu"],
+            "Krishnagiri": ["Bargur", "Denkanikottai", "Hosur", "Krishnagiri", "Pochampalli", "Uthangarai"],
+            "Villupuram": ["Gingee", "Kallakurichi", "Tindivanam", "Ulundurpet", "Vanur", "Villupuram"],
+            "Nagapattinam": ["Kilvelur", "Mayiladuthurai", "Nagapattinam", "Sirkali", "Tharangambadi", "Vedaranyam"],
+            "Pudukkottai": ["Aranthangi", "Avudaiyarkoil", "Gandarvakottai", "Illupur", "Karambakudi", "Kulathur", "Pudukkottai"],
+            "Ramanathapuram": ["Paramakudi", "Ramanathapuram", "Rameswaram", "Tiruvadanai"],
+            "Sivaganga": ["Devakottai", "Ilayangudi", "Karaikudi", "Manamadurai", "Sivaganga", "Tiruppattur"],
+            "Thoothukudi": ["Kovilpatti", "Ottapidaram", "Srivaikundam", "Thoothukudi", "Tiruchendur", "Vilathikulam"],
+            "Kanyakumari": ["Agastheeswaram", "Kalkulam", "Killiyoor", "Vilavancode"],
+            "Nilgiris": ["Coonoor", "Gudalur", "Kotagiri", "Ooty", "Panthalur"],
+            "Perambalur": ["Ariyalur", "Perambalur", "Kunnam", "Veppanthattai"],
+            "Ariyalur": ["Ariyalur", "Jayankondam", "Sendurai", "T.Palur"],
+            "Karur": ["Aravakurichi", "Karur", "Krishnarayapuram", "Kulittalai"],
+            "Tiruppur": ["Avinashi", "Dharapuram", "Kangeyam", "Madathukulam", "Palladam", "Tiruppur", "Udumalaipettai", "Uthukuli"],
+            "Tiruvallur": ["Gummidipoondi", "Ponneri", "Poonamallee", "Tiruvallur", "Uthukkottai"],
+            "Tiruvannamalai": ["Arni", "Cheyyar", "Chetpet", "Kalasapakkam", "Polur", "Tiruvannamalai", "Vandavasi", "Vembakkam"],
+            "Tiruvarur": ["Kodavasal", "Mannargudi", "Nannilam", "Needamangalam", "Papanasam", "Thiruthuraipoondi", "Tiruvarur"],
+            "Ranipet": ["Arakkonam", "Arcot", "Nemili", "Sholinghur", "Walajah"],
+            "Tirupattur": ["Ambur", "Natrampalli", "Tirupattur", "Vaniyambadi"],
+            "Chengalpattu": ["Chengalpattu", "Cheyyur", "Maduranthakam", "Thirukalukundram", "Tiruporur"],
+            "Kallakurichi": ["Chinnasalem", "Kallakurichi", "Sankarapuram", "Tirkoilur", "Ulundurpet"],
+            "Tenkasi": ["Kadayanallur", "Sankarankovil", "Shencottai", "Tenkasi", "Vasudevanallur"],
+            "Mayiladuthurai": ["Kuthalam", "Mayiladuthurai", "Sirkali"],
+            "Virudhunagar": ["Aruppukkottai", "Rajapalayam", "Sivakasi", "Srivilliputhur", "Virudhunagar", "Watrap"],
+            "Theni": ["Andipatti", "Bodinayakanur", "Periyakulam", "Theni", "Uthamapalayam"],
+        };
+
+        function loadTaluks() {
+            const district = document.getElementById('district_select').value;
+            const talukSelect = document.getElementById('taluk_select');
+            talukSelect.innerHTML = '<option value="">Select Taluk / வட்டம் தேர்ந்தெடு</option>';
+            if (districtTaluks[district]) {
+                districtTaluks[district].forEach(taluk => {
+                    talukSelect.innerHTML += `<option value="${taluk}">${taluk}</option>`;
+                });
+            }
+            document.getElementById('village_field').value = '';
+        }
+
+        function startVoice() {
+            const btn = document.getElementById('voice_btn');
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.lang = 'ta-IN';
+                recognition.start();
+                btn.innerHTML = '🔴';
+                btn.disabled = true;
+                recognition.onresult = function(event) {
+                    document.getElementById('village_field').value = event.results[0][0].transcript;
+                    btn.innerHTML = '🎤';
+                    btn.disabled = false;
+                };
+                recognition.onerror = function() {
+                    btn.innerHTML = '🎤';
+                    btn.disabled = false;
+                    alert('Voice not detected. Please try again!');
+                };
+                recognition.onend = function() {
+                    btn.innerHTML = '🎤';
+                    btn.disabled = false;
+                };
+            } else {
+                alert('Voice recognition not supported in this browser. Use Chrome!');
+            }
+        }
+    </script>
+</body>
+</html>
