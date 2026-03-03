@@ -5,6 +5,9 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, LoginForm
 
 def register_view(request):
+    import random
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -15,17 +18,18 @@ def register_view(request):
             user.phone_number = form.cleaned_data.get('phone_number')
             user.save()
             messages.success(request, 'Registration successful! Please login.')
-            return django.shortcuts.redirect('login')
+            return redirect('login')
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
     else:
         form = RegisterForm()
-    return django.shortcuts.render(request, 'accounts/register.html', {'form': form})
-
-
+    return render(request, 'accounts/register.html', {'form': form, 'num1': num1, 'num2': num2})
 def login_view(request):
+    import random
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -35,23 +39,19 @@ def login_view(request):
             if user:
                 login(request, user)
                 if user.role == 'main_admin':
-                    return django.shortcuts.redirect('main_admin_dashboard')
+                    return redirect('main_admin_dashboard')
                 elif user.role == 'sub_admin':
-                    return django.shortcuts.redirect('sub_admin_dashboard')
+                    return redirect('sub_admin_dashboard')
                 else:
-                    return django.shortcuts.redirect('user_dashboard')
+                    return redirect('user_dashboard')
             else:
                 messages.error(request, 'Invalid credentials!')
     else:
         form = LoginForm()
-    return django.shortcuts.render(request, 'accounts/login.html', {'form': form})
-
-
+    return render(request, 'accounts/login.html', {'form': form, 'num1': num1, 'num2': num2})
 def logout_view(request):
     logout(request)
     return django.shortcuts.redirect('login')
-
-
 @login_required
 def user_dashboard(request):
     from complaint_mgmt.models import Complaint
@@ -67,8 +67,6 @@ def user_dashboard(request):
         'emergency_complaints': emergency_complaints,
         'recent_complaints': recent_complaints,
     })
-
-
 @login_required
 def sub_admin_dashboard(request):
     if request.user.role != 'sub_admin':
@@ -86,8 +84,6 @@ def sub_admin_dashboard(request):
         'emergency': emergency,
         'recent': recent,
     })
-
-
 @login_required
 def sub_admin_complaints(request):
     if request.user.role != 'sub_admin':
@@ -101,8 +97,6 @@ def sub_admin_complaints(request):
         'complaints': complaints,
         'status_filter': status_filter,
     })
-
-
 @login_required
 def sub_admin_complaint_detail(request, complaint_id):
     if request.user.role != 'sub_admin':
@@ -119,8 +113,6 @@ def sub_admin_complaint_detail(request, complaint_id):
         messages.success(request, 'Complaint status updated!')
         return django.shortcuts.redirect('sub_admin_complaints')
     return django.shortcuts.render(request, 'sub_admin/complaint_detail.html', {'complaint': complaint})
-
-
 @login_required
 def main_admin_dashboard(request):
     if request.user.role != 'main_admin':
@@ -153,8 +145,6 @@ def main_admin_dashboard(request):
         'district_data': district_data,
         'monthly_data': monthly_data,
     })
-
-
 @login_required
 def main_admin_complaints(request):
     if request.user.role != 'main_admin':
@@ -172,8 +162,6 @@ def main_admin_complaints(request):
         'status_filter': status_filter,
         'district_filter': district_filter,
     })
-
-
 @login_required
 def main_admin_users(request):
     if request.user.role != 'main_admin':
@@ -181,8 +169,6 @@ def main_admin_users(request):
     from accounts.models import CustomUser
     users = CustomUser.objects.all().order_by('-date_joined')
     return django.shortcuts.render(request, 'main_admin/users.html', {'users': users})
-
-
 @login_required
 def main_admin_analytics(request):
     if request.user.role != 'main_admin':
@@ -203,8 +189,6 @@ def main_admin_analytics(request):
         'district_data': district_data,
         'monthly_data': monthly_data,
     })
-
-
 @login_required
 def main_admin_complaint_detail(request, complaint_id):
     if request.user.role != 'main_admin':
