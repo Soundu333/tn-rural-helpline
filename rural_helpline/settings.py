@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     'complaint_mgmt',
     'analytics',
     'notifications',
-    'captcha',
+    
 ]
 
 MIDDLEWARE = [
