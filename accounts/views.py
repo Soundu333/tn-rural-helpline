@@ -1,5 +1,4 @@
-
-from django.shortcuts import render, redirect
+import django.shortcuts
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -16,14 +15,15 @@ def register_view(request):
             user.phone_number = form.cleaned_data.get('phone_number')
             user.save()
             messages.success(request, 'Registration successful! Please login.')
-            return redirect('login')
+            return django.shortcuts.redirect('login')
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
     else:
         form = RegisterForm()
-    return render(request, 'accounts/register.html', {'form': form})
+    return django.shortcuts.render(request, 'accounts/register.html', {'form': form})
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -35,20 +35,22 @@ def login_view(request):
             if user:
                 login(request, user)
                 if user.role == 'main_admin':
-                    return redirect('main_admin_dashboard')
+                    return django.shortcuts.redirect('main_admin_dashboard')
                 elif user.role == 'sub_admin':
-                    return redirect('sub_admin_dashboard')
+                    return django.shortcuts.redirect('sub_admin_dashboard')
                 else:
-                    return redirect('user_dashboard')
+                    return django.shortcuts.redirect('user_dashboard')
             else:
                 messages.error(request, 'Invalid credentials!')
     else:
         form = LoginForm()
-    return render(request, 'accounts/login.html', {'form': form})
+    return django.shortcuts.render(request, 'accounts/login.html', {'form': form})
+
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return django.shortcuts.redirect('login')
+
 
 @login_required
 def user_dashboard(request):
@@ -58,7 +60,7 @@ def user_dashboard(request):
     resolved_complaints = Complaint.objects.filter(user=request.user, status='resolved').count()
     emergency_complaints = Complaint.objects.filter(user=request.user, priority='emergency').count()
     recent_complaints = Complaint.objects.filter(user=request.user).order_by('-created_at')[:5]
-    return render(request, 'user/dashboard.html', {
+    return django.shortcuts.render(request, 'user/dashboard.html', {
         'total_complaints': total_complaints,
         'pending_complaints': pending_complaints,
         'resolved_complaints': resolved_complaints,
@@ -66,17 +68,18 @@ def user_dashboard(request):
         'recent_complaints': recent_complaints,
     })
 
+
 @login_required
 def sub_admin_dashboard(request):
     if request.user.role != 'sub_admin':
-        return redirect('user_dashboard')
+        return django.shortcuts.redirect('user_dashboard')
     from complaint_mgmt.models import Complaint
     total = Complaint.objects.all().count()
     pending = Complaint.objects.filter(status='pending').count()
     resolved = Complaint.objects.filter(status='resolved').count()
     emergency = Complaint.objects.filter(priority='emergency').count()
     recent = Complaint.objects.all().order_by('-created_at')[:10]
-    return render(request, 'sub_admin/dashboard.html', {
+    return django.shortcuts.render(request, 'sub_admin/dashboard.html', {
         'total': total,
         'pending': pending,
         'resolved': resolved,
@@ -84,24 +87,26 @@ def sub_admin_dashboard(request):
         'recent': recent,
     })
 
+
 @login_required
 def sub_admin_complaints(request):
     if request.user.role != 'sub_admin':
-        return redirect('user_dashboard')
+        return django.shortcuts.redirect('user_dashboard')
     from complaint_mgmt.models import Complaint
     status_filter = request.GET.get('status', '')
     complaints = Complaint.objects.all().order_by('-created_at')
     if status_filter:
         complaints = complaints.filter(status=status_filter)
-    return render(request, 'sub_admin/complaints.html', {
+    return django.shortcuts.render(request, 'sub_admin/complaints.html', {
         'complaints': complaints,
         'status_filter': status_filter,
     })
 
+
 @login_required
 def sub_admin_complaint_detail(request, complaint_id):
     if request.user.role != 'sub_admin':
-        return redirect('user_dashboard')
+        return django.shortcuts.redirect('user_dashboard')
     from complaint_mgmt.models import Complaint
     from django.utils import timezone
     complaint = Complaint.objects.get(id=complaint_id)
@@ -112,14 +117,15 @@ def sub_admin_complaint_detail(request, complaint_id):
             complaint.resolved_at = timezone.now()
         complaint.save()
         messages.success(request, 'Complaint status updated!')
-        return redirect('sub_admin_complaints')
-    return render(request, 'sub_admin/complaint_detail.html', {'complaint': complaint})
+        return django.shortcuts.redirect('sub_admin_complaints')
+    return django.shortcuts.render(request, 'sub_admin/complaint_detail.html', {'complaint': complaint})
+
 
 @login_required
 def main_admin_dashboard(request):
     if request.user.role != 'main_admin':
-        return redirect('user_dashboard')
-    from complaint_mgmt.models import Complaint
+        return django.shortcuts.redirect('user_dashboard')
+    from complaint_mgmt.models import Complaint, Category
     from django.db.models import Count
     from django.db.models.functions import TruncMonth
 
@@ -135,7 +141,7 @@ def main_admin_dashboard(request):
     district_data = list(Complaint.objects.values('district').annotate(count=Count('id')))
     monthly_data = list(Complaint.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).order_by('month'))
 
-    return render(request, 'main_admin/dashboard.html', {
+    return django.shortcuts.render(request, 'main_admin/dashboard.html', {
         'total': total,
         'closed': closed,
         'open_complaints': open_complaints,
@@ -148,10 +154,11 @@ def main_admin_dashboard(request):
         'monthly_data': monthly_data,
     })
 
+
 @login_required
 def main_admin_complaints(request):
     if request.user.role != 'main_admin':
-        return redirect('user_dashboard')
+        return django.shortcuts.redirect('user_dashboard')
     from complaint_mgmt.models import Complaint
     status_filter = request.GET.get('status', '')
     district_filter = request.GET.get('district', '')
@@ -160,24 +167,26 @@ def main_admin_complaints(request):
         complaints = complaints.filter(status=status_filter)
     if district_filter:
         complaints = complaints.filter(district=district_filter)
-    return render(request, 'main_admin/complaints.html', {
+    return django.shortcuts.render(request, 'main_admin/complaints.html', {
         'complaints': complaints,
         'status_filter': status_filter,
         'district_filter': district_filter,
     })
 
+
 @login_required
 def main_admin_users(request):
     if request.user.role != 'main_admin':
-        return redirect('user_dashboard')
+        return django.shortcuts.redirect('user_dashboard')
     from accounts.models import CustomUser
     users = CustomUser.objects.all().order_by('-date_joined')
-    return render(request, 'main_admin/users.html', {'users': users})
+    return django.shortcuts.render(request, 'main_admin/users.html', {'users': users})
+
 
 @login_required
 def main_admin_analytics(request):
     if request.user.role != 'main_admin':
-        return redirect('user_dashboard')
+        return django.shortcuts.redirect('user_dashboard')
     from complaint_mgmt.models import Complaint
     from django.db.models import Count, Q
     from django.db.models.functions import TruncMonth
@@ -189,8 +198,26 @@ def main_admin_analytics(request):
     district_data = list(Complaint.objects.values('district').annotate(count=Count('id')).order_by('-count')[:10])
     monthly_data = list(Complaint.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).order_by('month'))
 
-    return render(request, 'main_admin/analytics.html', {
+    return django.shortcuts.render(request, 'main_admin/analytics.html', {
         'category_data': category_data,
         'district_data': district_data,
         'monthly_data': monthly_data,
     })
+
+
+@login_required
+def main_admin_complaint_detail(request, complaint_id):
+    if request.user.role != 'main_admin':
+        return django.shortcuts.redirect('user_dashboard')
+    from complaint_mgmt.models import Complaint
+    from django.utils import timezone
+    complaint = Complaint.objects.get(id=complaint_id)
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        complaint.status = status
+        if status == 'resolved':
+            complaint.resolved_at = timezone.now()
+        complaint.save()
+        messages.success(request, 'Complaint status updated!')
+        return django.shortcuts.redirect('main_admin_complaints')
+    return django.shortcuts.render(request, 'main_admin/complaint_detail.html', {'complaint': complaint})

@@ -57,14 +57,42 @@ def register_complaint(request):
         messages.success(request, f'Complaint registered! Ticket ID: {complaint.ticket_id}')
         return redirect('my_complaints')
     return render(request, 'user/register_complaint.html', {'categories': categories})
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Complaint, SubCategory
+
 
 @login_required
 def get_subcategories(request):
     category_id = request.GET.get('category_id')
-    subcategories = SubCategory.objects.filter(category_id=category_id).values('id', 'name', 'name_tamil')
+    subcategories = SubCategory.objects.filter(
+        category_id=category_id
+    ).values('id', 'name', 'name_tamil')
     return JsonResponse({'subcategories': list(subcategories)})
+
 
 @login_required
 def my_complaints(request):
-    complaints = Complaint.objects.filter(user=request.user).order_by('-created_at')
+    complaints = Complaint.objects.filter(
+        user=request.user
+    ).order_by('-created_at')
     return render(request, 'user/my_complaints.html', {'complaints': complaints})
+
+
+@login_required
+def complaint_detail(request, id):
+    complaint = get_object_or_404(Complaint, id=id)
+    return render(request, 'complaint_detail.html', {'complaint': complaint})
+
+
+@login_required
+def admin_complaint_detail(request, id):
+    complaint = get_object_or_404(Complaint, id=id)
+    return render(request, 'admin/complaint_detail.html', {'complaint': complaint})
+
+
+@login_required
+def mainadmin_complaint_detail(request, id):
+    complaint = get_object_or_404(Complaint, id=id)
+    return render(request, 'admin/complaint_detail.html', {'complaint': complaint})

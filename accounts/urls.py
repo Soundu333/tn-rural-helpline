@@ -11,6 +11,7 @@ urlpatterns = [
     path('sub-admin/complaint/<int:complaint_id>/', views.sub_admin_complaint_detail, name='sub_admin_complaint_detail'),
     path('main-admin/dashboard/', views.main_admin_dashboard, name='main_admin_dashboard'),
     path('main-admin/complaints/', views.main_admin_complaints, name='main_admin_complaints'),
+    path('main-admin/complaint/<int:complaint_id>/', views.main_admin_complaint_detail, name='main_admin_complaint_detail'),
     path('main-admin/users/', views.main_admin_users, name='main_admin_users'),
     path('main-admin/analytics/', views.main_admin_analytics, name='main_admin_analytics'),
 ]

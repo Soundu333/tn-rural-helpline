@@ -92,7 +92,10 @@
                     <tbody>
                         {% for complaint in complaints %}
                         <tr>
-                            <td><strong>{{ complaint.ticket_id }}</strong></td>
+                            <td><a href="{% url 'mainadmin_complaint_detail' complaint.id %}" class="text-light">
+        <strong>{{ complaint.ticket_id }}</strong>
+    </a>
+</td>
                             <td>{{ complaint.name|default:complaint.user.username }}</td>
                             <td>{{ complaint.category.name|default:"N/A" }}</td>
                             <td>{{ complaint.district }}</td>

@@ -5,4 +5,8 @@ urlpatterns = [
     path('register/', views.register_complaint, name='register_complaint'),
     path('my-complaints/', views.my_complaints, name='my_complaints'),
     path('get-subcategories/', views.get_subcategories, name='get_subcategories'),
+    path('complaint/<int:id>/', views.complaint_detail, name='complaint_detail'),
+
+    path('admin/complaint/<int:id>/', views.admin_complaint_detail, name='admin_complaint_detail'),
+    path('main-admin/complaint/<int:id>/', views.mainadmin_complaint_detail, name='mainadmin_complaint_detail'),
 ]

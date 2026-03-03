@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Detail - Main Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #0d0d1a; color: #e0e0e0; }
+        .sidebar { background: #1a0533; min-height: 100vh; position: fixed; width: 250px; padding: 0; }
+        .sidebar-header { background: #2d0a5e; padding: 20px; text-align: center; color: white; }
+        .sidebar-menu a { display: block; padding: 15px 20px; color: #ccc; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: #2d0a5e; color: white; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .detail-card { background: #1a1a2e; border-radius: 10px; border: 1px solid #2d0a5e; padding: 25px; margin-bottom: 20px; }
+        .section-title { color: #b44fff; font-weight: bold; font-size: 16px; border-bottom: 1px solid #2d0a5e; padding-bottom: 10px; margin-bottom: 15px; }
+        .info-row { display: flex; padding: 8px 0; border-bottom: 1px solid #2a2a4a; }
+        .info-label { width: 200px; color: #aaa; font-size: 14px; flex-shrink: 0; }
+        .info-value { color: #e0e0e0; font-size: 14px; }
+        .btn-back { background: #6c757d; color: white; border: none; padding: 8px 20px; border-radius: 5px; text-decoration: none; }
+        .btn-update { background: #b44fff; color: white; border: none; padding: 8px 25px; border-radius: 5px; }
+        .form-select { background: #2a2a4a; color: white; border: 1px solid #b44fff; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h5>👑 Main Admin</h5>
+            <small>TN Rural Helpline</small>
+        </div>
+        <div class="sidebar-menu">
+            <a href="/accounts/main-admin/dashboard/"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+            <a href="/accounts/main-admin/complaints/" class="active"><i class="fas fa-list me-2"></i> All Complaints</a>
+            <a href="/accounts/main-admin/users/"><i class="fas fa-users me-2"></i> Users</a>
+            <a href="/accounts/main-admin/analytics/"><i class="fas fa-chart-bar me-2"></i> Analytics</a>
+            <a href="/accounts/logout/"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 style="color:#b44fff;"><i class="fas fa-file-alt me-2"></i> Complaint Detail</h4>
+            <a href="/accounts/main-admin/complaints/" class="btn-back"><i class="fas fa-arrow-left me-1"></i> Back</a>
+        </div>
+
+        <div class="detail-card">
+            <div class="section-title"><i class="fas fa-ticket-alt me-2"></i> Ticket Information</div>
+            <div class="info-row"><span class="info-label">Ticket ID</span><span class="info-value"><strong style="color:#b44fff;">{{ complaint.ticket_id }}</strong></span></div>
+            <div class="info-row"><span class="info-label">Submitted Date</span><span class="info-value">{{ complaint.created_at|date:"d M Y, h:i A" }}</span></div>
+            <div class="info-row"><span class="info-label">Priority</span><span class="info-value"><span class="badge bg-danger">{{ complaint.priority|upper }}</span></span></div>
+            <div class="info-row"><span class="info-label">Current Status</span><span class="info-value"><span class="badge bg-warning text-dark">{{ complaint.status|upper }}</span></span></div>
+        </div>
+
+        <div class="detail-card">
+            <div class="section-title"><i class="fas fa-user me-2"></i> Complainant Information</div>
+            <div class="info-row"><span class="info-label">Name</span><span class="info-value">{{ complaint.name }}</span></div>
+            <div class="info-row"><span class="info-label">Mobile</span><span class="info-value">{{ complaint.mobile }}</span></div>
+            <div class="info-row"><span class="info-label">Email</span><span class="info-value">{{ complaint.email|default:"Not provided" }}</span></div>
+            <div class="info-row"><span class="info-label">Address</span><span class="info-value">{{ complaint.address|default:"Not provided" }}</span></div>
+        </div>
+
+        <div class="detail-card">
+            <div class="section-title"><i class="fas fa-map-marker-alt me-2"></i> Location Information</div>
+            <div class="info-row"><span class="info-label">District</span><span class="info-value">{{ complaint.district }}</span></div>
+            <div class="info-row"><span class="info-label">Block / Taluk</span><span class="info-value">{{ complaint.block }}</span></div>
+            <div class="info-row"><span class="info-label">Panchayat</span><span class="info-value">{{ complaint.panchayat }}</span></div>
+            <div class="info-row"><span class="info-label">Habitation</span><span class="info-value">{{ complaint.habitation }}</span></div>
+        </div>
+
+        <div class="detail-card">
+            <div class="section-title"><i class="fas fa-exclamation-circle me-2"></i> Complaint Details</div>
+            <div class="info-row"><span class="info-label">Category</span><span class="info-value">{{ complaint.category.name }} ({{ complaint.category.name_tamil }})</span></div>
+            <div class="info-row"><span class="info-label">Sub Category</span><span class="info-value">{{ complaint.sub_category.name|default:"N/A" }}</span></div>
+            {% if complaint.mm_reference %}<div class="info-row"><span class="info-label">MM Reference</span><span class="info-value">{{ complaint.mm_reference }}</span></div>{% endif %}
+            <div class="info-row"><span class="info-label">Title</span><span class="info-value"><strong>{{ complaint.title }}</strong></span></div>
+            <div class="info-row"><span class="info-label">Description</span><span class="info-value">{{ complaint.description }}</span></div>
+            {% if complaint.document %}<div class="info-row"><span class="info-label">Document</span><span class="info-value"><a href="{{ complaint.document.url }}" target="_blank" style="color:#b44fff;"><i class="fas fa-file-pdf me-1"></i> View Document</a></span></div>{% endif %}
+            {% if complaint.photo %}<div class="info-row"><span class="info-label">Photo</span><span class="info-value"><a href="{{ complaint.photo.url }}" target="_blank" style="color:#b44fff;"><i class="fas fa-image me-1"></i> View Photo</a></span></div>{% endif %}
+        </div>
+
+        <div class="detail-card">
+            <div class="section-title"><i class="fas fa-edit me-2"></i> Update Status</div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <label style="color:#aaa; font-size:14px;">Change Status:</label>
+                        <select name="status" class="form-select mt-1">
+                            <option value="pending" {% if complaint.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="in_progress" {% if complaint.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                            <option value="resolved" {% if complaint.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                            <option value="closed" {% if complaint.status == 'closed' %}selected{% endif %}>Closed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mt-4">
+                        <button type="submit" class="btn-update"><i class="fas fa-save me-1"></i> Update Status</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

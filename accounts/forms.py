@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from captcha.fields import CaptchaField
 from .models import CustomUser
 
 TN_DISTRICTS = [
@@ -53,15 +52,15 @@ class RegisterForm(UserCreationForm):
     )
     taluk = forms.CharField(max_length=100)
     village = forms.CharField(max_length=100)
-    captcha = CaptchaField()
+    
 
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'phone_number',
                   'district', 'taluk', 'village',
-                  'password1', 'password2', 'captcha']
+                  'password1', 'password2', ]
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput)
-    captcha = CaptchaField()
+    
