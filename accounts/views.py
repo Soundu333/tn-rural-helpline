@@ -30,17 +30,7 @@ def register_view(request):
 
 
 def login_view(request):
-    num1 = random.randint(1, 10)
-    num2 = random.randint(1, 10)
     if request.method == 'POST':
-        num1 = int(request.POST.get('captcha_num1', 0))
-        num2 = int(request.POST.get('captcha_num2', 0))
-        answer = int(request.POST.get('captcha_answer', -1))
-        if num1 + num2 != answer:
-            messages.error(request, 'Captcha wrong! Try again!')
-            num1 = random.randint(1, 10)
-            num2 = random.randint(1, 10)
-            return render(request, 'accounts/login.html', {'num1': num1, 'num2': num2})
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
@@ -54,8 +44,7 @@ def login_view(request):
                 return redirect('user_dashboard')
         else:
             messages.error(request, 'Invalid credentials!')
-    return render(request, 'accounts/login.html', {'num1:num1,'num2':num2})
-
+    return render(request, 'accounts/login.html', {})
 
 def logout_view(request):
     logout(request)
