@@ -7,9 +7,9 @@ import random
 
 
 def register_view(request):
-    num1 = random.randint(1, 10)
-    num2 = random.randint(1, 10)
     if request.method == 'POST':
+        num1 = int(request.POST.get('captcha_num1', 0))
+        num2 = int(request.POST.get('captcha_num2', 0))
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
@@ -21,10 +21,10 @@ def register_view(request):
             messages.success(request, 'Registration successful! Please login.')
             return redirect('login')
         else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{field}: {error}')
+            messages.error(request, 'Please check the form and try again!')
     else:
+        num1 = random.randint(1, 10)
+        num2 = random.randint(1, 10)
         form = RegisterForm()
     return render(request, 'accounts/register.html', {'form': form, 'num1': num1, 'num2': num2})
 
@@ -55,6 +55,7 @@ def login_view(request):
         num2 = random.randint(1, 10)
         form = LoginForm()
     return render(request, 'accounts/login.html', {'form': form, 'num1': num1, 'num2': num2})
+
 
 def logout_view(request):
     logout(request)
