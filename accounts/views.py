@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, LoginForm
 import random
+import json
 
 
 def register_view(request):
@@ -43,6 +44,7 @@ def login_view(request):
         else:
             messages.error(request, 'Invalid credentials!')
     return render(request, 'accounts/login.html', {})
+
 
 def logout_view(request):
     logout(request)
@@ -91,16 +93,12 @@ def sub_admin_complaints(request):
         return redirect('user_dashboard')
     from complaint_mgmt.models import Complaint
     status_filter = request.GET.get('status', '')
-    
-    # Sub admin district filter
     if request.user.district:
         complaints = Complaint.objects.filter(district=request.user.district).order_by('-created_at')
     else:
         complaints = Complaint.objects.all().order_by('-created_at')
-    
     if status_filter:
         complaints = complaints.filter(status=status_filter)
-    
     return render(request, 'sub_admin/complaints.html', {
         'complaints': complaints,
         'status_filter': status_filter,
@@ -202,10 +200,17 @@ def main_admin_analytics(request):
     district_data = list(Complaint.objects.values('district').annotate(count=Count('id')).order_by('-count')[:10])
     monthly_data = list(Complaint.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).order_by('month'))
 
+    monthly_data_clean = []
+    for item in monthly_data:
+        monthly_data_clean.append({
+            'month': item['month'].strftime('%Y-%m') if item['month'] else '',
+            'count': item['count']
+        })
+
     return render(request, 'main_admin/analytics.html', {
-        'category_data': category_data,
-        'district_data': district_data,
-        'monthly_data': monthly_data,
+        'category_data': json.dumps(category_data),
+        'district_data': json.dumps(district_data),
+        'monthly_data': json.dumps(monthly_data_clean),
     })
 
 
