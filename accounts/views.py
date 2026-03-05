@@ -91,9 +91,16 @@ def sub_admin_complaints(request):
         return redirect('user_dashboard')
     from complaint_mgmt.models import Complaint
     status_filter = request.GET.get('status', '')
-    complaints = Complaint.objects.all().order_by('-created_at')
+    
+    # Sub admin district filter
+    if request.user.district:
+        complaints = Complaint.objects.filter(district=request.user.district).order_by('-created_at')
+    else:
+        complaints = Complaint.objects.all().order_by('-created_at')
+    
     if status_filter:
         complaints = complaints.filter(status=status_filter)
+    
     return render(request, 'sub_admin/complaints.html', {
         'complaints': complaints,
         'status_filter': status_filter,
