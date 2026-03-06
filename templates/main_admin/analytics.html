@@ -59,74 +59,77 @@
     </div>
 
     <script>
-        // Category Chart
-        const categoryData = {{ category_data|safe }};
-        const categoryLabels = categoryData.map(d => d.category__name || 'Unknown');
-        const categoryValues = categoryData.map(d => d.total);
+        try {
+            const categoryData = {{ category_data|safe }};
+            const categoryLabels = categoryData.map(function(d) { return d.category__name || 'Unknown'; });
+            const categoryValues = categoryData.map(function(d) { return d.total; });
 
-        new Chart(document.getElementById('categoryChart'), {
-            type: 'bar',
-            data: {
-                labels: categoryLabels,
-                datasets: [{
-                    label: 'Complaints',
-                    data: categoryValues,
-                    backgroundColor: '#b44fff',
-                }]
-            },
-            options: {
-                plugins: { legend: { labels: { color: '#e0e0e0' } } },
-                scales: {
-                    x: { ticks: { color: '#e0e0e0' } },
-                    y: { ticks: { color: '#e0e0e0' }, beginAtZero: true }
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'bar',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: 'Complaints',
+                        data: categoryValues,
+                        backgroundColor: '#b44fff',
+                    }]
+                },
+                options: {
+                    plugins: { legend: { labels: { color: '#e0e0e0' } } },
+                    scales: {
+                        x: { ticks: { color: '#e0e0e0' } },
+                        y: { ticks: { color: '#e0e0e0' }, beginAtZero: true }
+                    }
                 }
-            }
-        });
+            });
+        } catch(e) { console.log('Category chart error:', e); }
 
-        // District Chart
-        const districtData = {{ district_data|safe }};
-        const districtLabels = districtData.map(d => d.district || 'Unknown');
-        const districtValues = districtData.map(d => d.count);
+        try {
+            const districtData = {{ district_data|safe }};
+            const districtLabels = districtData.map(function(d) { return d.district || 'Unknown'; });
+            const districtValues = districtData.map(function(d) { return d.count; });
 
-        new Chart(document.getElementById('districtChart'), {
-            type: 'doughnut',
-            data: {
-                labels: districtLabels,
-                datasets: [{
-                    data: districtValues,
-                    backgroundColor: ['#b44fff','#7c3aed','#4f46e5','#0ea5e9','#10b981','#f59e0b','#ef4444'],
-                }]
-            },
-            options: {
-                plugins: { legend: { labels: { color: '#e0e0e0' } } }
-            }
-        });
-
-        // Monthly Chart
-        const monthlyData = {{ monthly_data|safe }};
-        const monthlyLabels = monthlyData.map(d => d.month ? d.month.substring(0,7) : '');
-        const monthlyValues = monthlyData.map(d => d.count);
-
-        new Chart(document.getElementById('monthlyChart'), {
-            type: 'line',
-            data: {
-                labels: monthlyLabels,
-                datasets: [{
-                    label: 'Complaints per Month',
-                    data: monthlyValues,
-                    borderColor: '#b44fff',
-                    backgroundColor: 'rgba(180,79,255,0.2)',
-                    fill: true,
-                }]
-            },
-            options: {
-                plugins: { legend: { labels: { color: '#e0e0e0' } } },
-                scales: {
-                    x: { ticks: { color: '#e0e0e0' } },
-                    y: { ticks: { color: '#e0e0e0' }, beginAtZero: true }
+            new Chart(document.getElementById('districtChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: districtLabels,
+                    datasets: [{
+                        data: districtValues,
+                        backgroundColor: ['#b44fff','#7c3aed','#4f46e5','#0ea5e9','#10b981','#f59e0b','#ef4444'],
+                    }]
+                },
+                options: {
+                    plugins: { legend: { labels: { color: '#e0e0e0' } } }
                 }
-            }
-        });
+            });
+        } catch(e) { console.log('District chart error:', e); }
+
+        try {
+            const monthlyData = {{ monthly_data|safe }};
+            const monthlyLabels = monthlyData.map(function(d) { return d.month || ''; });
+            const monthlyValues = monthlyData.map(function(d) { return d.count; });
+
+            new Chart(document.getElementById('monthlyChart'), {
+                type: 'line',
+                data: {
+                    labels: monthlyLabels,
+                    datasets: [{
+                        label: 'Complaints per Month',
+                        data: monthlyValues,
+                        borderColor: '#b44fff',
+                        backgroundColor: 'rgba(180,79,255,0.2)',
+                        fill: true,
+                    }]
+                },
+                options: {
+                    plugins: { legend: { labels: { color: '#e0e0e0' } } },
+                    scales: {
+                        x: { ticks: { color: '#e0e0e0' } },
+                        y: { ticks: { color: '#e0e0e0' }, beginAtZero: true }
+                    }
+                }
+            });
+        } catch(e) { console.log('Monthly chart error:', e); }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
