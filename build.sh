@@ -11,6 +11,7 @@ User = get_user_model()
 if not User.objects.filter(username='mainadmin').exists():
     u = User.objects.create_superuser('mainadmin', 'msoundharya40@gmail.com', 'Admin@1234')
     u.role = 'main_admin'
+    u.phone_number = '7845488475'
     u.save()
     print('Superuser created!')
 
