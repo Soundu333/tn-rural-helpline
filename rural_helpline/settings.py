@@ -88,7 +88,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/accounts/login/'
 
-TEMPLATES[0]['OPTIONS']['loaders'] = [
-    'django.tempalates.loaders.filesystem.loders',
-    'django .template.loaders.app_directories.loader',
-]
