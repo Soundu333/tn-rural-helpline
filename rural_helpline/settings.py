@@ -87,3 +87,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/accounts/login/'
+
+TEMPLATES[0]['OPTIONS']['Loaders'] = [
+    'django.tempalates.Loaders.filesystem.Loders',
+    'django .template.Loaders.app_directories.Loader',
+]

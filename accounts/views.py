@@ -139,10 +139,6 @@ def main_admin_dashboard(request):
     pending = Complaint.objects.filter(status='pending').count()
     in_progress = Complaint.objects.filter(status='in_progress').count()
 
-    category_data = list(Complaint.objects.values('category__name').annotate(count=Count('id')))
-    district_data = list(Complaint.objects.values('district').annotate(count=Count('id')))
-    monthly_data = list(Complaint.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).order_by('month'))
-
     return render(request, 'main_admin/dashboard.html', {
         'total': total,
         'closed': closed,
@@ -151,9 +147,6 @@ def main_admin_dashboard(request):
         'emergency': emergency,
         'pending': pending,
         'in_progress': in_progress,
-        'category_data': category_data,
-        'district_data': district_data,
-        'monthly_data': monthly_data,
     })
 
 
@@ -193,16 +186,34 @@ def main_admin_analytics(request):
     from django.db.models import Count, Q
     from django.db.models.functions import TruncMonth
 
-    category_data = list(Complaint.objects.values('category__name').annotate(
+    category_raw = Complaint.objects.values('category__name').annotate(
         total=Count('id'),
         resolved=Count('id', filter=Q(status='resolved'))
-    ))
-    district_data = list(Complaint.objects.values('district').annotate(count=Count('id')).order_by('-count')[:10])
-    monthly_data = list(Complaint.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).order_by('month'))
+    )
+    category_data = []
+    for item in category_raw:
+        category_data.append({
+            'category__name': item['category__name'] or 'Unknown',
+            'total': item['total'],
+            'resolved': item['resolved']
+        })
 
-    monthly_data_clean = []
-    for item in monthly_data:
-        monthly_data_clean.append({
+    district_raw = Complaint.objects.values('district').annotate(
+        count=Count('id')
+    ).order_by('-count')[:10]
+    district_data = []
+    for item in district_raw:
+        district_data.append({
+            'district': item['district'] or 'Unknown',
+            'count': item['count']
+        })
+
+    monthly_raw = Complaint.objects.annotate(
+        month=TruncMonth('created_at')
+    ).values('month').annotate(count=Count('id')).order_by('month')
+    monthly_data = []
+    for item in monthly_raw:
+        monthly_data.append({
             'month': item['month'].strftime('%Y-%m') if item['month'] else '',
             'count': item['count']
         })
@@ -210,7 +221,7 @@ def main_admin_analytics(request):
     return render(request, 'main_admin/analytics.html', {
         'category_data': json.dumps(category_data),
         'district_data': json.dumps(district_data),
-        'monthly_data': json.dumps(monthly_data_clean),
+        'monthly_data': json.dumps(monthly_data),
     })
 
 
