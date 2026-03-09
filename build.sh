@@ -9,9 +9,10 @@ from complaint_mgmt.models import Category, SubCategory
 
 User = get_user_model()
 if not User.objects.filter(username='mainadmin').exists():
-    u = User.objects.create_superuser('mainadmin', 'msoundharya40@gmail.com', 'Admin@1234')
-    u.role = 'main_admin'
-    u.phone_number = '7845488475'
+    u = User(username='mainadmin', email='msoundharya40@gmail.com', role='main_admin', phone_number='7845488475')
+    u.set_password('Admin@1234')
+    u.is_superuser = True
+    u.is_staff = True
     u.save()
     print('Superuser created!')
 
