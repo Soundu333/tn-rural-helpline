@@ -30,7 +30,6 @@ def register_complaint(request):
 
         complaint = Complaint.objects.create(
             user=request.user,
-            title=title,
             description=description,
             category=category,
             sub_category=sub_category,
