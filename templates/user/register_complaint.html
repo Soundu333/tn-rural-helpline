@@ -108,7 +108,7 @@
                     <tr><td>MM Reference Number<br><small>(Makkaludan Mudhalvar)</small></td><td><input type="text" name="mm_reference" class="form-control" placeholder="Only Numbers"></td></tr>
                     <tr><td><span class="required">*</span> Grievance type / புகார் வகை</td><td><select name="category" id="category_select" class="form-control" onchange="loadSubCategories()" required><option value="">Choose</option>{% for cat in categories %}<option value="{{ cat.id }}">{{ cat.name }} ({{ cat.name_tamil }})</option>{% endfor %}</select></td></tr>
                     <tr><td><span class="required">*</span> Grievance sub type / உட்பிரிவு</td><td><select name="sub_category" id="sub_category_select" class="form-control" required><option value="">Choose</option></select></td></tr>
-                    <tr><td><span class="required">*</span> Complaint Title / தலைப்பு</td><td><div class="input-group"><input type="text" name="title" id="title_field" class="form-control" placeholder="Brief title" required><button type="button" class="btn btn-outline-secondary" onclick="startVoice('title_field')">🎤</button></div></td></tr>
+                    
                     <tr><td><span class="required">*</span> Complaint Description / விளக்கம்</td><td><div class="input-group"><textarea name="description" id="description_field" class="form-control" rows="4" required></textarea><button type="button" class="btn btn-outline-secondary" onclick="startVoice('description_field')">🎤</button></div></td></tr>
                     <tr><td>Details of Complaint<br><span class="note-text">Format: PDF (Max 5MB)</span></td><td><input type="file" name="document" class="form-control" accept=".pdf"></td></tr>
                     <tr><td>Photos<br><span class="note-text">Format: JPEG, JPG, PNG (Max 2MB)</span></td><td><input type="file" name="photo" class="form-control" accept=".jpg,.jpeg,.png"></td></tr>
@@ -144,7 +144,7 @@
             "Pudukkottai": ["Aranthangi", "Avudaiyarkoil", "Gandarvakottai", "Illupur", "Karambakudi", "Kulathur", "Pudukkottai", "Alangudi", "Ponnamaravathi", "Thirumayam", "Viralimalai"],
             "Ramanathapuram": ["Paramakudi", "Ramanathapuram", "Rameswaram", "Tiruvadanai", "Kadaladi", "Kamudhi", "Mudukulathur"],
             "Ranipet": ["Arakkonam", "Arcot", "Nemili", "Sholinghur", "Walajah", "Kalavai", "Timiri"],
-            "Salem": ["Attur", "Edapadi", "Mettur", "Omalur", "Salem", "Sankari", "Yercaud", "Gangavalli", "Kadayampatti", "Tharamangalam", "Vazhapadi", "Veerapandi"],
+            "Salem": ["Attur","pethanaikkenpalayam","vazhapadi", "Edapadi", "Mettur", "Omalur", "Salem", "Sankari", "Yercaud", "Gangavalli", "Kadayampatti", "Tharamangalam", "Vazhapadi", "Veerapandi"],
             "Sivaganga": ["Devakottai", "Ilayangudi", "Karaikudi", "Manamadurai", "Sivaganga", "Tiruppattur", "Kallal", "Kalaiyarkovil", "Sakkottai", "Singampunari"],
             "Tenkasi": ["Kadayanallur", "Sankarankovil", "Shencottai", "Tenkasi", "Vasudevanallur", "Alangulam", "Keelapavoor", "Sivagiri"],
             "Thanjavur": ["Kumbakonam", "Orathanadu", "Papanasam", "Pattukkottai", "Peravurani", "Thanjavur", "Thiruvaiyaru", "Ammapettai", "Budalur", "Madukkur", "Thiruvidaimarudur"],
